@@ -5,3 +5,53 @@ date: "2022-10-15"
 output: github_document
 ---
 
+```{r}
+# library all packages that we need at the beginning
+library(tidyverse)
+```
+
+## Problem 1
+
+This problem uses the Instacart data. DO NOT include this dataset in your local data directory; instead, load the data from the p8105.datasets using:
+
+```{r}
+library(p8105.datasets)
+data("instacart")
+```
+
+## Problem 2
+
+Accelerometers have become an appealing alternative to self-report techniques for studying physical activity in observational studies and clinical trials, largely because of their relative objectivity. During observation periods, the devices measure “activity counts” in a short period; one-minute intervals are common. Because accelerometers can be worn comfortably and unobtrusively, they produce around-the-clock observations.
+
+This problem uses five weeks of accelerometer data collected on a 63 year-old male with BMI 25, who was admitted to the Advanced Cardiac Care Center of Columbia University Medical Center and diagnosed with congestive heart failure (CHF). The data can be downloaded here. In this spreadsheet, variables activity.* are the activity counts for each minute of a 24-hour day starting at midnight.
+
+### Read in, tidy, and describe the data
+
+Load, tidy, and otherwise wrangle the data. Your final dataset should include all originally observed variables and values; have useful variable names; include a weekday vs weekend variable; and encode data with reasonable variable classes. Describe the resulting dataset (e.g. what variables exist, how many observations, etc).
+
+```{r}
+# read in data from CSV file
+accel_data <- read_csv("data/accel_data.csv")
+# show the first several lines of the original data
+head(accel_data)
+# clean, tidy, wrangle the data
+accel_data <- accel_data %>% 
+  janitor::clean_names() %>% 
+  rename(day_type = day) %>% 
+  pivot_longer(
+    c(activity_1:activity_1440),
+    names_to = "minute", 
+    values_to = "activity_counts",
+    names_prefix = 'activity_') %>% 
+  mutate(
+    weekday_vs_weekend = ifelse((day_type == "Saturday" | day_type == "Sunday"), "weekend", "weekday"),
+    activity_counts = as.double(activity_counts),
+    minute = as.integer(minute))
+# show the cleaned data
+accel_data
+```
+
+This dataset contains `r nrow(accel_data)` rows and `r ncol(accel_data)` columns, while each row showing an activity measure in a single minute during the 5-week data collection period. Variables include week (from the first week to the fifth week), day_id(from the first day to the 35th day), day_type (includes Monday to Sunday), minute (every minute in a single day), activity_counts (the count that is recorded in the accelerometer), and weekday_vs_weekend (which distinguishs weekdays and weekend). There are total `r nrow(accel_data)` observations, which are the activity measures from every minute in a day during the 5-week period.
+
+
+
