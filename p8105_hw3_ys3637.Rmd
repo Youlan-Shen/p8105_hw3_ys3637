@@ -77,7 +77,7 @@ accel_data %>%
   knitr::kable()
 ```
 
-### draw a graph of activity
+### Draw a graph of activity
 
 ```{r}
 # produce the week 1 graph
@@ -134,3 +134,71 @@ accel_data %>%
 From the graph, the person tends to have higher activity counts over the weekdays, especially Friday, Thursday, and Wednesday, and over the weekend, the person tends to have lower activity counts. These 5 weeks are kind of different from each other, but in general, the person has a similar pattern--Friday usually has the highest activity counts, and Saturday usually has the lowest activity counts, weekday activity counts are higher than the weekend.
 
 ## Problem 3
+
+```{r}
+library(p8105.datasets)
+data("ny_noaa")
+```
+
+The goal is to do some exploration of this dataset. To that end, write a short description of the dataset, noting the size and structure of the data, describing some key variables, and indicating the extent to which missing data is an issue. 
+
+#### Read in the data
+
+```{r}
+data("ny_noaa")
+
+ny_noaa = 
+  ny_noaa %>% 
+  as_tibble(ny_noaa)
+
+# count the rows of the data
+n <- nrow(ny_noaa)
+# show the data
+ny_noaa
+# count the NAs
+ny_noaa %>% 
+  summarise(na_prcp = sum(is.na(prcp)) / n,
+            na_snow = sum(is.na(snow)) / n,
+            na_snwd = sum(is.na(snwd)) / n,
+            na_tmax = sum(is.na(tmax)) / n,
+            na_tmin = sum(is.na(tmin)) / n)
+```
+
+This dataset contains `r nrow(ny_noaa)` rows and `r ncol(ny_noaa)` columns, while each row showing the weather measures in a specific date recorded in weather station. Variables include id (the weather station ID), date (the date that weather data observed), prcp (precipitaion on that day), snow (snowfall in mm), snwd (snow depth in mm), tmax (maximum temperature in C), and tmin (minimum temperature in C). There are total `r nrow(ny_noaa)` observations, which are the weather data recorded in a time period. 
+
+From the above Count The NAs result, the percentage of NAs in prcp is 0.0562, which is not a big issue. The percentage of NAs in snow is 0.147, in snwd is 0.228, in tmax is 0.437, in tmin is 0.437. I think that the percentage of NAs in a data over 0.05 could be considered as an issue, so actually snow, snwd, tmax, and tmin have issues with missing values, especially tmax and tmin--lost almost half of the data.
+
+#### Clean the data
+
+```{r}
+# separate variables for year, month, and day
+ny_noaa <- ny_noaa %>% 
+  janitor::clean_names() %>% 
+  separate(date, into = c("year", "month", "day"), sep = "-")
+# Ensure observations for temperature, precipitation, and snowfall are given in reasonable units
+ny_noaa %>% 
+  mutate(prcp = as.double(prcp), tmax = as.double(tmax), 
+         tmin = as.double(tmin), snow = as.double(snow)) %>% 
+  arrange(desc(snow)) %>% 
+  head()
+# show the most commonly observed values in snow
+ny_noaa %>% 
+  select(snow) %>% 
+  group_by(snow) %>% 
+  summarise(count = n()) %>% 
+  arrange(desc(count))
+```
+
+So the most commonly observed values in snow is 0, NA, 25, 53, in mm.
+
+### Make a two-panel plot showing the average max temperature in January and in July
+
+
+### Make a two-panel plot showing (i) tmax vs tmin for the full dataset
+
+
+
+### Make a two-panel plot showing (ii) make a plot showing the distribution of snowfall values greater than 0 and less than 100 separately by year.
+
+
+
