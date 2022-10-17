@@ -176,9 +176,10 @@ ny_noaa <- ny_noaa %>%
   janitor::clean_names() %>% 
   separate(date, into = c("year", "month", "day"), sep = "-")
 # Ensure observations for temperature, precipitation, and snowfall are given in reasonable units
-ny_noaa %>% 
+ny_noaa <- ny_noaa %>% 
   mutate(prcp = as.double(prcp), tmax = as.double(tmax), 
-         tmin = as.double(tmin), snow = as.double(snow)) %>% 
+         tmin = as.double(tmin), snow = as.double(snow))
+ny_noaa %>% 
   arrange(desc(snow)) %>% 
   head()
 # show the most commonly observed values in snow
@@ -189,13 +190,23 @@ ny_noaa %>%
   arrange(desc(count))
 ```
 
-So the most commonly observed values in snow is 0, NA, 25, 53, in mm.
+So the most commonly observed values in snow is 0, NA, 25, 13, 51, 76, 8, 5, 38, 3 in mm.
 
 ### Make a two-panel plot showing the average max temperature in January and in July
 
+```{r}
+ny_noaa %>% 
+  select(id, month, tmax) %>% 
+  filter(month == "01" | month == "07") %>% 
+  group_by(id, month) %>% 
+  summarise(avg_tmax = mean(tmax))
+```
 
 ### Make a two-panel plot showing (i) tmax vs tmin for the full dataset
 
+```{r}
+
+```
 
 
 ### Make a two-panel plot showing (ii) make a plot showing the distribution of snowfall values greater than 0 and less than 100 separately by year.
