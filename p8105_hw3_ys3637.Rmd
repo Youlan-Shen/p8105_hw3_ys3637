@@ -243,4 +243,4 @@ distri_snowfall <- ny_noaa %>%
 tmax_vs_tmin / distri_snowfall
 ```
 
-
+From thr graph, the line of tmax vs tmin has a slope, while tmin increases, tmax increases. tmax and tmin have some correlation. And we can see in some years, the value of snowfall is extreme, but in total, the distribution of snow is around a similar value. And there is a cycle of snowfall, during a period of years, the value of snowfall will increase and then decrease, and repeats like this over the course of years.
