@@ -8,14 +8,9 @@ output: github_document
 ```{r}
 # library all packages that we need at the beginning
 library(tidyverse)
+library(ggridges)
 
 # default set up
-knitr::opts_chunk$set(
-  fig.width = 6,
-  fig.asp = .6,
-  out.width = "90%"
-)
-
 theme_set(theme_minimal() + theme(legend.position = "bottom"))
 
 options(
@@ -85,8 +80,57 @@ accel_data %>%
 ### draw a graph of activity
 
 ```{r}
-
+# produce the week 1 graph
+graph_produce <- function(x, a){
+  x %>%
+  filter(week == a) %>% 
+  mutate(day_type = forcats::fct_relevel(day_type, c("Monday", "Tuesday",
+        "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"))) %>% 
+  ggplot(aes(x = minute, y = activity_counts, color = day_type)) +
+  geom_smooth(method = "lm", se = FALSE) +
+  labs(
+    title = paste("Activity Counts Over A Day in Week ", as.character(a)),
+    x = "Each Minute",
+    y = "Activity Counts"
+  )
+}
+graph_produce(accel_data, 1)
 ```
 
+```{r}
+# produce the week 2 graph
+graph_produce(accel_data, 2)
+```
 
+```{r}
+# produce the week 3 graph
+graph_produce(accel_data, 3)
+```
 
+```{r}
+# produce the week 4 graph
+graph_produce(accel_data, 4)
+```
+
+```{r}
+# produce the week 5 graph
+graph_produce(accel_data, 5)
+```
+
+```{r}
+# produce the total period graph
+accel_data %>%
+  mutate(day_type = forcats::fct_relevel(day_type, c("Monday", "Tuesday",
+        "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"))) %>% 
+  ggplot(aes(x = minute, y = activity_counts, color = day_type)) +
+  geom_smooth(method = "lm", se = FALSE) +
+  labs(
+    title = "Activity Counts Over A Day in Total 5 Weeks",
+    x = "Each Minute",
+    y = "Activity Counts",
+  )
+```
+
+From the graph, the person tends to have higher activity counts over the weekdays, especially Friday, Thursday, and Wednesday, and over the weekend, the person tends to have lower activity counts. These 5 weeks are kind of different from each other, but in general, the person has a similar pattern--Friday usually has the highest activity counts, and Saturday usually has the lowest activity counts, weekday activity counts are higher than the weekend.
+
+## Problem 3
